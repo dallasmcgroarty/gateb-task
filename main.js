@@ -1,3 +1,4 @@
+// the initial product data
 let data = [
   {
     name: 'Wireless Earbuds',
@@ -53,11 +54,44 @@ let data = [
   }
 ]
 
-const id = window.location.hash.slice(1);
-console.log(id)
-// product url ==> /#{sku}
+/**
+ * sets up the popup modal functionality
+ */
+const setupPopup = () => {
+  const modal = document.querySelector('.modal');
+  const overlay = document.querySelector('.overlay');
+  const btnCloseModal = document.querySelector('.close-modal');
+  const addNewProduct = document.querySelector('.add-new-product');
 
-function setupLocalStorage() {
+  const closeModal = () => {
+    modal.classList.add('hidden');
+    overlay.classList.add('hidden');
+  }
+
+  const openModal = () => {
+    modal.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+  }
+
+  addNewProduct.addEventListener('click', openModal);
+
+  btnCloseModal.addEventListener('click', closeModal);
+
+  overlay.addEventListener('click', closeModal);
+
+  document.querySelector('body').addEventListener('keydown', function(e) {
+      if (!modal.classList.contains('hidden')) {
+          if (e.key == 'Escape') {
+              closeModal();
+          }
+      }
+  });
+}
+
+/**
+ * sets up localstorage
+ */
+const setupLocalStorage = () => {
   if (localStorage.length === 0) {
     // empty localstorage
     data.forEach(product => {
@@ -68,11 +102,32 @@ function setupLocalStorage() {
   }
 }
 
-function getItemFromLocalStorage(key) {
+/**
+ * gets item from localstorage and parses it
+ * 
+ * @param {String} key the string to access localstorage data at specified key
+ * @return {Object} The parsed product object
+ */
+const getItemFromLocalStorage = (key) => {
   return JSON.parse(localStorage.getItem(key))
 }
 
-function getProductSku() {
+/**
+ * gets the cart count from localstorage and updates the cart-count element
+ */
+const setCartCount = () => {
+  if (localStorage.getItem('cart') !== null) {
+    let cartCount = Number(localStorage.getItem('cart'));
+    document.getElementById('cart-count').textContent = cartCount;
+  }
+}
+
+/**
+ * gets the current product sku from url
+ * 
+ * @return {String} the products sku
+ */
+const getProductSku = () => {
   const sku = window.location.hash.slice(1);
 
   if (sku) {
@@ -82,54 +137,138 @@ function getProductSku() {
   return null;
 }
 
-function loadProduct() {
-  sku = getProductSku()
+/**
+ * loads a product by sku, gets product data from localstorage and renders product html
+ */
+const loadProduct = () => {
+  const sku = getProductSku()
 
-  product = getItemFromLocalStorage(sku);
+  const product = getItemFromLocalStorage(sku);
 
   if (product) {
     renderProductImages(product.images)
     renderProductDetails(product)
   }
-
-  console.log(product)
 }
 
-function renderProductImages(images) {
-  html = `<div class="product-images">`;
+/**
+ * renders product images with html
+ * 
+ * @param {Array} images the array of images to render
+ */
+const renderProductImages = (images) => {
+  let html = `<div class="product-images">`;
 
   for (img of images) {
-    html += `<img class="product-image" src="images/${img}" />`;
+    let image;
+    if (img.includes('upload')) {
+      image = localStorage.getItem(img);
+      html += `<img class="product-image" src="${image}" />`;
+    } else {
+      html += `<img class="product-image" src="images/${img}" />`;
+    }
   }
 
   html += `</div>`;
   document.querySelector('.product').insertAdjacentHTML('afterbegin', html);
 }
 
-function renderProductDetails(product) {
+/**
+ * renders the product details with html
+ * 
+ * @param {Object} product - the product object to render
+ */
+const renderProductDetails = (product) => {
   html = 
   `<div class="product-details">
     <h1 class="product-name">${product.name}</h1>
     <span class="product-price">$${product.price}</span>
     <p class="product-desc">${product.description}</p>
-    <span class="product-category">${product.category}</span>
-    <span class="product-sku">${product.sku}</span>
-    <button class="add-to-cart-button">Add to Cart</button>
+    <span class="product-category">Category: ${product.category}</span>
+    <span class="product-sku">SKU: ${product.sku}</span>
+    <div class="cta-buttons">
+      <button class="add-to-cart-button">Add to Cart</button>
+      <button class="add-new-product">Add a New Product</button>
+    </div>
    </div>`;
 
    document.querySelector('.product').insertAdjacentHTML('beforeend', html);
 }
 
-function setUpAddToCartEvent() {
+/**
+ * sets up the add to cart event listener and updates cart value
+ */
+const setUpAddToCartEvent = () => {
   document.querySelector('.add-to-cart-button').addEventListener('click', (e) => {
-    cartCount = Number(localStorage.getItem('cart'));
+    let cartCount = Number(localStorage.getItem('cart'));
     cartCount += 1
     localStorage.setItem('cart', String(cartCount));
-    console.log(cartCount);
+    document.getElementById('cart-count').textContent = cartCount;
   })
 }
 
-function setupSlider() {
+/**
+ * renders recommended products, which is currently all available products
+ */
+const renderRecommendedProducts = () => {
+  let html = '';
+  let products = []
+  let keys = Object.keys(localStorage);
+
+  // get all keys from localstorage exluding ones we don't want
+  keys.forEach(key => {
+    if (key !== 'cart' && key !== 'loglevel' && !key.includes('upload')) {
+      products.push(getItemFromLocalStorage(key));
+    }
+  });
+
+  products.forEach(product => {
+    let link = window.location.origin + `/#${product.sku}`;
+    let image;
+
+    // handle case where images were uploaded to localstroage
+    if (product.images[0].includes('upload')) {
+      image = localStorage.getItem(product.images[0]);
+    } else {
+      image = `images/${product.images[0]}`;
+    }
+
+    html += `
+      <div class="recommended-products__product">
+        <a href="/#${product.sku}" data-link="${link}" class="recommended-products__product-link">
+          <img class="recommended-products__product-image" src="${image}" />
+          <div class="recommended-products__product-product-info">
+            <span class="recommended-products__product-name">${product.name}</span>
+            <span class="recommended-products__product-price">$${product.price}</span>
+          </div>
+        </a>
+      </div>
+    `;
+  });
+
+  document.querySelector('.recommended-products').insertAdjacentHTML('afterbegin', html);
+  setUpRecommendedProductsEvent();
+}
+
+/**
+ * sets up recommended products event listeners
+ *  - workaround for linking to new product pages, without having a separate page
+ */
+const setUpRecommendedProductsEvent = () => {
+  document.querySelectorAll('.recommended-products__product-link').forEach(el => {
+    el.addEventListener('click', (ev) => {
+      if (location.href !== el.dataset.link) {
+        location.href = el.dataset.link;
+        window.location.reload();
+      }
+    });
+  });
+}
+
+/**
+ * sets up the slick slider
+ */
+const setupSlider = () => {
   $('.product-images').slick({
     arrows: false,
     dots: true,
@@ -137,11 +276,67 @@ function setupSlider() {
   });
 }
 
-function init() {
-  setupLocalStorage()
-  loadProduct()
-  setupSlider()
-  setUpAddToCartEvent()
+/**
+ * sets up product form event listener and saves new product to localstorage
+ */
+const newProductFormHandler =() => {
+  document.querySelector('#new-product-form').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+
+    const formData = new FormData(document.querySelector('#new-product-form'),document.querySelector('#product-form-submit'));
+    
+    // assign uploaded to use as a possible reference
+    let product = {
+      uploaded: true
+    }
+
+    for (const [key, value] of formData) {
+      if (key !== 'images') {
+        product[key] = value;
+      }
+    }
+
+    let images = ev.target.images.files;
+    product['images'] = []
+
+    // loop through image files
+    for (let i = 0; i < images.length; i++) {
+      let reader = new FileReader();
+
+      // read file into localstorage with key
+      reader.addEventListener("load", () =>{  
+        localStorage.setItem(`upload-${product.sku}-image${i}`,reader.result)
+      })
+
+      // save the image keys for reference
+      product['images'].push(`upload-${product.sku}-image${i}`);
+      reader.readAsDataURL(images[i]);
+    }
+
+    // save to localstorage
+    localStorage.setItem(product.sku, JSON.stringify(product));
+
+    // close modal
+    document.querySelector('.close-modal').click();
+
+    // go to new product
+    location.href = `${location.origin}/#${product.sku}`;
+    window.location.reload();
+  })
+}
+
+/**
+ * initialize application
+ */
+const init = () => {
+  setupLocalStorage();
+  loadProduct();
+  setCartCount();
+  setupSlider();
+  setUpAddToCartEvent();
+  renderRecommendedProducts();
+  setupPopup();
+  newProductFormHandler();
 }
 
 init()
