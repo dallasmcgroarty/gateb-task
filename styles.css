@@ -1,0 +1,106 @@
+/**
+    CSS styles
+**/
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.header {
+    min-height: 40px;
+    background-color: #707070;
+}
+
+.main-content {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.product {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.product-images {
+    max-width: 500px;
+    width: 100%;
+}
+
+.product-image {
+    width: 500px;
+    height: auto;
+}
+
+.product-details {
+    width: 100%;
+    padding: 20px;
+}
+
+.product-details span {
+    display: block;
+}
+
+.add-to-cart-button {
+    border: none;
+    outline: none;
+    background-color: #5bb84c;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-top: 40px;
+    cursor: pointer;
+    color: #fff;
+    transition: all .3s;
+}
+
+.add-to-cart-button:hover {
+    background-color: #3f8734;
+}
+
+/**
+    Slick dots
+**/
+
+.slick-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    padding-left: 0px;
+}
+
+.slick-dots button {
+    display: none;
+}
+
+.slick-dots li.slick-active {
+    opacity: 1;
+}
+
+.slick-dots li {
+    margin-left: 20px;
+    opacity: 0.3;
+    cursor: pointer;
+}
+
+.slick-dots li::marker {
+    font-size: 26px;
+}
+
+/**
+    Mobile
+**/
+
+@media (max-width: 768px) {
+    .product {
+        flex-direction: column;
+        gap: 0px;
+        margin-top: 0px;
+    }
+
+    .product-details {}
+}
