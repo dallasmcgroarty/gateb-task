@@ -143,13 +143,13 @@ const getProductSku = () => {
 const loadProduct = () => {
   let sku = getProductSku()
 
-  // if no sku set default sku and set url
-  if (sku === null) {
+  // if no sku or bad sku set default sku and set url
+  if (sku === null || getItemFromLocalStorage(sku) === null) {
     sku = data[0].sku;
     location.href = `${location.origin}/#${sku}`;
   }
 
-  const product = getItemFromLocalStorage(sku);
+  let product = getItemFromLocalStorage(sku);
 
   if (product) {
     renderProductImages(product.images)
@@ -339,7 +339,7 @@ const init = () => {
   loadProduct();
   setCartCount();
   setupSlider();
-  //setUpAddToCartEvent();
+  setUpAddToCartEvent();
   renderRecommendedProducts();
   setupPopup();
   newProductFormHandler();
