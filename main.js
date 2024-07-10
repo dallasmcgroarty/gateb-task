@@ -339,7 +339,7 @@ const init = () => {
   loadProduct();
   setCartCount();
   setupSlider();
-  setUpAddToCartEvent();
+  //setUpAddToCartEvent();
   renderRecommendedProducts();
   setupPopup();
   newProductFormHandler();
