@@ -148,7 +148,7 @@ const loadProduct = () => {
   // if no sku or bad sku set default sku and set url
   if (sku === null || getItemFromLocalStorage(sku) === null) {
     sku = data[0].sku;
-    location.href = `${location.origin}/#${sku}`;
+    location.href = `${window.location.pathname}#${sku}`;
   }
 
   let product = getItemFromLocalStorage(sku);
@@ -246,7 +246,7 @@ const renderRecommendedProducts = () => {
   });
 
   products.forEach(product => {
-    let link = window.location.origin + `/#${product.sku}`;
+    let link = `${window.location.pathname}#${product.sku}`;
     let image;
 
     // handle case where images were uploaded to localstroage
@@ -351,7 +351,7 @@ const newProductFormHandler =() => {
     document.querySelector('.close-modal').click();
 
     // set url
-    location.href = `${location.origin}/#${product.sku}`;
+    location.href = `${window.location.pathname}#${product.sku}`;
     
     // reset form fields
     document.querySelector('#new-product-form').reset();
