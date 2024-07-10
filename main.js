@@ -258,7 +258,7 @@ const renderRecommendedProducts = () => {
 
     html += `
       <div class="recommended-products__product">
-        <a href="/#${product.sku}" data-link="${link}" class="recommended-products__product-link">
+        <a href="${link}" data-sku="${product.sku}" class="recommended-products__product-link">
           <img class="recommended-products__product-image" src="${image}" />
           <div class="recommended-products__product-product-info">
             <span class="recommended-products__product-name">${product.name}</span>
@@ -286,8 +286,10 @@ const renderRecommendedProducts = () => {
 const setUpRecommendedProductsEvent = () => {
   document.querySelectorAll('.recommended-products__product-link').forEach(el => {
     el.addEventListener('click', (ev) => {
-      if (location.href !== el.dataset.link) {
-        location.href = el.dataset.link;
+      ev.preventDefault();
+
+      if (window.location.hash.slice(1) !== el.dataset.sku) {
+        location.href = el.href;
         loadProduct();
         handleScroll();
       }

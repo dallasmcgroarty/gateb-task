@@ -2,6 +2,15 @@
 
 gateb task
 
+## Run application
+
+run in local environment
+index.html is the entry point
+no installations necessary
+make sure access to localstorage is allowed
+
+Developed in visual studio code using live server exentsion
+
 ## Features
 
 Product Detail Page
