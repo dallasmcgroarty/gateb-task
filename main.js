@@ -61,7 +61,6 @@ const setupPopup = () => {
   const modal = document.querySelector('.modal');
   const overlay = document.querySelector('.overlay');
   const btnCloseModal = document.querySelector('.close-modal');
-  const addNewProduct = document.querySelector('.add-new-product');
 
   const closeModal = () => {
     modal.classList.add('hidden');
@@ -76,7 +75,7 @@ const setupPopup = () => {
     document.body.classList.add('no-scroll');
   }
 
-  addNewProduct.addEventListener('click', openModal);
+  $('body').on('click', '.add-new-product', openModal);
 
   btnCloseModal.addEventListener('click', closeModal);
 
@@ -179,7 +178,17 @@ const renderProductImages = (images) => {
   }
 
   html += `</div>`;
-  document.querySelector('.product').insertAdjacentHTML('afterbegin', html);
+
+  if (document.getElementsByClassName('product-images').length > 0) {
+    document.querySelector('.product-images').remove();
+    document.querySelector('.product').insertAdjacentHTML('afterbegin', html);
+   } else {
+    document.querySelector('.product').insertAdjacentHTML('afterbegin', html);
+   }
+
+   // reset the slider
+   setupSlider();
+   $('.product-images').slick('resize');
 }
 
 /**
@@ -201,14 +210,19 @@ const renderProductDetails = (product) => {
     </div>
    </div>`;
 
-   document.querySelector('.product').insertAdjacentHTML('beforeend', html);
+   if (document.getElementsByClassName('product-details').length > 0) {
+    document.querySelector('.product-details').remove();
+    document.querySelector('.product').insertAdjacentHTML('beforeend', html);
+   } else {
+    document.querySelector('.product').insertAdjacentHTML('beforeend', html);
+   }
 }
 
 /**
  * sets up the add to cart event listener and updates cart value
  */
 const setUpAddToCartEvent = () => {
-  document.querySelector('.add-to-cart-button').addEventListener('click', (e) => {
+  $('body').on('click','.add-to-cart-button', (e) => {
     let cartCount = Number(localStorage.getItem('cart'));
     cartCount += 1
     localStorage.setItem('cart', String(cartCount));
@@ -255,7 +269,13 @@ const renderRecommendedProducts = () => {
     `;
   });
 
-  document.querySelector('.recommended-products').insertAdjacentHTML('afterbegin', html);
+  if (document.getElementsByClassName('recommended-products').length > 0) {
+    document.querySelector('.recommended-products').innerHTML = '';
+    document.querySelector('.recommended-products').insertAdjacentHTML('afterbegin', html);
+   } else {
+    document.querySelector('.recommended-products').insertAdjacentHTML('afterbegin', html);
+   }
+
   setUpRecommendedProductsEvent();
 }
 
@@ -268,7 +288,8 @@ const setUpRecommendedProductsEvent = () => {
     el.addEventListener('click', (ev) => {
       if (location.href !== el.dataset.link) {
         location.href = el.dataset.link;
-        window.location.reload();
+        loadProduct();
+        handleScroll();
       }
     });
   });
@@ -329,19 +350,28 @@ const newProductFormHandler =() => {
     // close modal
     document.querySelector('.close-modal').click();
 
-    // go to new product
+    // set url
     location.href = `${location.origin}/#${product.sku}`;
-    window.location.reload();
+    
+    // reset form fields
+    document.querySelector('#new-product-form').reset();
+
+    // wait a little to load products
+    setTimeout(() => {
+      loadProduct();
+      renderRecommendedProducts();
+    }, 500);
   })
 }
 
 /**
  * handles page load by scrolling to top of page
  */
-const handleLoad = () => {
-  window.onbeforeunload = function () {
-    window.scrollTo(0, 0);
-  }
+const handleScroll = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 
 /**
@@ -351,12 +381,10 @@ const init = () => {
   setupLocalStorage();
   loadProduct();
   setCartCount();
-  setupSlider();
   setUpAddToCartEvent();
   renderRecommendedProducts();
   setupPopup();
   newProductFormHandler();
-  handleLoad();
 }
 
-init()
+init();
