@@ -66,11 +66,14 @@ const setupPopup = () => {
   const closeModal = () => {
     modal.classList.add('hidden');
     overlay.classList.add('hidden');
+    document.body.classList.remove('no-scroll');
   }
 
   const openModal = () => {
     modal.classList.remove('hidden');
     overlay.classList.remove('hidden');
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+    document.body.classList.add('no-scroll');
   }
 
   addNewProduct.addEventListener('click', openModal);
@@ -296,6 +299,7 @@ const newProductFormHandler =() => {
       uploaded: true
     }
 
+    // store formData in new product object
     for (const [key, value] of formData) {
       if (key !== 'images') {
         product[key] = value;
