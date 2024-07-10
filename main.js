@@ -141,7 +141,13 @@ const getProductSku = () => {
  * loads a product by sku, gets product data from localstorage and renders product html
  */
 const loadProduct = () => {
-  const sku = getProductSku()
+  let sku = getProductSku()
+
+  // if no sku set default sku and set url
+  if (sku === null) {
+    sku = data[0].sku;
+    location.href = `${location.origin}/#${sku}`;
+  }
 
   const product = getItemFromLocalStorage(sku);
 
