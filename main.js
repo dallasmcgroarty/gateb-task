@@ -336,6 +336,15 @@ const newProductFormHandler =() => {
 }
 
 /**
+ * handles page load by scrolling to top of page
+ */
+const handleLoad = () => {
+  window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+  }
+}
+
+/**
  * initialize application
  */
 const init = () => {
@@ -347,6 +356,7 @@ const init = () => {
   renderRecommendedProducts();
   setupPopup();
   newProductFormHandler();
+  handleLoad();
 }
 
 init()
