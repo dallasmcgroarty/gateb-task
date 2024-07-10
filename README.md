@@ -41,6 +41,7 @@ Product Detail Page
 - localstorage is used to retreive and save all products
 
 - handling special cases
+
   - no sku entered/base url
     - the first product from the initial data is used
   - sku does not exist in localstorage
@@ -51,3 +52,7 @@ Product Detail Page
     - file input only accepts .jpg,.jpeg,.png, and .gif
   - duplicate sku used
     - will override the current data in localstroge associated with that key
+
+- limitations
+  - using localstorage will only allow a few products to be stored before it runs
+    out of memory, most likely from the image data

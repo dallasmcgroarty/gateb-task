@@ -365,7 +365,7 @@ const newProductFormHandler =() => {
 }
 
 /**
- * handles page load by scrolling to top of page
+ * scrolls to top of page 
  */
 const handleScroll = () => {
   window.scrollTo({
