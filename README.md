@@ -2,6 +2,12 @@
 
 gateb task
 
+## Live site
+
+The application is live on github pages the link is:
+
+[https://dallasmcgroarty.com/gateb-task/](gateb-task)
+
 ## Run application
 
 run in local environment
