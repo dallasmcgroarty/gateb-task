@@ -6,7 +6,7 @@ gateb task
 
 The application is live on github pages the link is:
 
-[https://dallasmcgroarty.com/gateb-task/](gateb-task)
+<a href="https://dallasmcgroarty.com/gateb-task/" target="_blank">gateb-task</a>
 
 ## Run application
 
